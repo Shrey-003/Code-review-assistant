@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+const JWT_SECRET = process.env.JWT_SECRET || "default-secret-change-in-production";
+
 // Helper: Get token from either custom jwt or _vercel_jwt
 const getTokenFromCookies = (req) => {
   return req.cookies.jwt || req.cookies._vercel_jwt;
@@ -12,7 +14,7 @@ const requireAuth = (req, res, next) => {
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
   try {
-    const decoded = jwt.verify(token, "PranshuOnlineJudge");
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // { id, role }
     next();
   } catch (err) {
@@ -27,7 +29,7 @@ const requireAdmin = (req, res, next) => {
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
   try {
-    const decoded = jwt.verify(token, "PranshuOnlineJudge");
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.role !== "admin") {
       return res.status(403).json({ error: "Access denied: Admins only." });
     }
@@ -48,7 +50,7 @@ const checkUser = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, "PranshuOnlineJudge");
+    const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.id).select("-password");
     res.locals.user = user;
     next();

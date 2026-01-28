@@ -49,18 +49,18 @@ const readGridFSFile = (filename) => {
     if (!gfs) {
       return reject(new Error("GridFS not initialized"));
     }
-    
+
     let data = "";
     const stream = gfs.openDownloadStreamByName(filename);
-    
+
     stream.on("data", (chunk) => {
       data += chunk.toString();
     });
-    
+
     stream.on("end", () => {
       resolve(data);
     });
-    
+
     stream.on("error", (error) => {
       console.error(`❌ Error reading GridFS file ${filename}:`, error);
       reject(error);
@@ -84,17 +84,17 @@ const writeGridFSFile = (filename, content) => {
       // Create new file
       const uploadStream = gfs.openUploadStream(filename);
       const readable = Readable.from(content);
-      
+
       uploadStream.on("error", (error) => {
         console.error(`❌ Error writing GridFS file ${filename}:`, error);
         reject(error);
       });
-      
+
       uploadStream.on("finish", () => {
         console.log(`✅ GridFS file ${filename} written successfully`);
         resolve();
       });
-      
+
       readable.pipe(uploadStream);
     } catch (error) {
       console.error(`❌ Error in writeGridFSFile for ${filename}:`, error);
@@ -108,7 +108,7 @@ const deleteGridFSFileIfExists = async (filename) => {
     console.warn("GridFS not initialized, cannot delete file:", filename);
     return;
   }
-  
+
   try {
     const files = await gfs.find({ filename }).toArray();
     if (files.length > 0) {
@@ -129,8 +129,8 @@ exports.createProblem = async (req, res) => {
 
     // Validate required fields
     if (!title || !description || !difficulty || !Array.isArray(testCases)) {
-      return res.status(400).json({ 
-        error: "All fields and testCases array are required." 
+      return res.status(400).json({
+        error: "All fields and testCases array are required."
       });
     }
 
@@ -143,16 +143,16 @@ exports.createProblem = async (req, res) => {
       .filter((tc) => tc.input && tc.expectedOutput);
 
     if (cleanedTestCases.length === 0) {
-      return res.status(400).json({ 
-        error: "At least one valid test case is required." 
+      return res.status(400).json({
+        error: "At least one valid test case is required."
       });
     }
 
     // Check if problem already exists
     const exists = await Problem.findOne({ title });
     if (exists) {
-      return res.status(400).json({ 
-        error: "Problem with this title already exists." 
+      return res.status(400).json({
+        error: "Problem with this title already exists."
       });
     }
 
@@ -178,10 +178,10 @@ exports.createProblem = async (req, res) => {
     try {
       await writeGridFSFile(inputFileName, JSON.stringify(inputs, null, 2));
       await writeGridFSFile(outputFileName, JSON.stringify(outputs, null, 2));
-      
+
       console.log(`✅ Problem created successfully with ID: ${id}`);
-      res.status(201).json({ 
-        message: "Problem created successfully", 
+      res.status(201).json({
+        message: "Problem created successfully",
         id,
         testCasesCount: cleanedTestCases.length
       });
@@ -194,9 +194,9 @@ exports.createProblem = async (req, res) => {
 
   } catch (err) {
     console.error("❌ Error in createProblem:", err);
-    res.status(500).json({ 
-      error: "Internal server error", 
-      details: err.message 
+    res.status(500).json({
+      error: "Internal server error",
+      details: err.message
     });
   }
 };
@@ -206,7 +206,7 @@ exports.getProblem = async (req, res) => {
   try {
     const { id } = req.params;
     const problem = await Problem.findById(id);
-    
+
     if (!problem) {
       return res.status(404).json({ error: "Problem not found" });
     }
@@ -215,15 +215,15 @@ exports.getProblem = async (req, res) => {
     const outputFileName = `${id}_expected_output.txt`;
 
     let testCases = [];
-    
+
     if (gfs) {
       try {
         const inputData = await readGridFSFile(inputFileName);
         const outputData = await readGridFSFile(outputFileName);
-        
+
         const inputs = JSON.parse(inputData);
         const outputs = JSON.parse(outputData);
-        
+
         testCases = inputs.map((inp, i) => ({
           input: inp,
           expectedOutput: outputs[i] || "",
@@ -236,8 +236,8 @@ exports.getProblem = async (req, res) => {
       console.warn("⚠️ GridFS not initialized, returning problem without test cases");
     }
 
-    res.json({ 
-      ...problem.toObject(), 
+    res.json({
+      ...problem.toObject(),
       testCases,
       testCasesCount: testCases.length
     });
@@ -258,7 +258,7 @@ exports.editProblem = async (req, res) => {
       { title, description, difficulty },
       { new: true }
     );
-    
+
     if (!updated) {
       return res.status(404).json({ error: "Problem not found" });
     }
@@ -334,11 +334,48 @@ exports.runProblem = async (req, res) => {
   }
 };
 
-// List problems
+// List problems with filtering, sorting, and pagination
 exports.listProblems = async (req, res) => {
   try {
-    const problems = await Problem.find({}, "title difficulty");
-    res.json(problems);
+    const { difficulty, sort, page = 1, limit = 20 } = req.query;
+
+    // Build query
+    const query = {};
+    if (difficulty) {
+      query.difficulty = difficulty;
+    }
+
+    // Build sort
+    let sortOption = {};
+    if (sort === "newest") {
+      sortOption = { createdAt: -1 };
+    } else if (sort === "oldest") {
+      sortOption = { createdAt: 1 };
+    } else if (sort === "difficulty") {
+      // Custom sort: Easy, Medium, Hard
+      sortOption = { difficulty: 1, createdAt: -1 };
+    } else {
+      sortOption = { createdAt: -1 }; // Default to newest
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+
+    const total = await Problem.countDocuments(query);
+    const problems = await Problem.find(query, "title difficulty createdAt")
+      .sort(sortOption)
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    res.json({
+      problems,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        totalProblems: total,
+        hasMore: pageNum < Math.ceil(total / limitNum),
+      },
+    });
   } catch (err) {
     console.error("❌ Error in listProblems:", err);
     res.status(500).json({ error: "Failed to fetch problems" });
@@ -350,7 +387,7 @@ exports.deleteProblem = async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await Problem.findByIdAndDelete(id);
-    
+
     if (!deleted) {
       return res.status(404).json({ error: "Problem not found" });
     }

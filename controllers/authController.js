@@ -27,8 +27,10 @@ const handleErrors = (err) => {
 };
 
 const maxAge = 3 * 24 * 60 * 60; // 3 days
+const JWT_SECRET = process.env.JWT_SECRET || "default-secret-change-in-production";
+
 const createToken = (id, role) => {
-  return jwt.sign({ id, role }, "PranshuOnlineJudge", {
+  return jwt.sign({ id, role }, JWT_SECRET, {
     expiresIn: maxAge,
   });
 };
@@ -120,7 +122,7 @@ module.exports.me_get = async (req, res) => {
   if (!token) return res.status(200).json({ user: null });
 
   try {
-    const decoded = jwt.verify(token, "PranshuOnlineJudge");
+    const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) return res.status(200).json({ user: null });

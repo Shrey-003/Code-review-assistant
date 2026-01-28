@@ -20,18 +20,35 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
-  }
+  },
+  // Statistics for user dashboard
+  statistics: {
+    problemsSolvedCount: { type: Number, default: 0 },
+    easyCount: { type: Number, default: 0 },
+    mediumCount: { type: Number, default: 0 },
+    hardCount: { type: Number, default: 0 },
+    totalSubmissions: { type: Number, default: 0 },
+    successfulSubmissions: { type: Number, default: 0 },
+    averageSolveTime: { type: Number, default: 0 } // in milliseconds
+  },
+  // Streak tracking for gamification
+  streak: {
+    currentStreak: { type: Number, default: 0 },
+    longestStreak: { type: Number, default: 0 },
+    lastSubmissionDate: { type: Date, default: null }
+  },
+  createdAt: { type: Date, default: Date.now }
 });
 
 // Pre-save hook to hash password
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
 // Static method to login
-userSchema.statics.login = async function(email, password) {
+userSchema.statics.login = async function (email, password) {
   const user = await this.findOne({ email });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);

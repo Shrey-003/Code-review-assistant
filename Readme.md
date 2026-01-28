@@ -3,9 +3,9 @@
 This project is a microservices-based Online Judge system designed to manage coding problems, user submissions, and code evaluations at scale. The architecture promotes modularity, scalability, and ease of maintenance.
 ## 🔗 Project Links
 
-- **🌐 Live Project**: [View Deployed App](https://dev-project-aj2v4vtls-pranshu-goels-projects.vercel.app)
-- **📁 GitHub Repository**: [GitHub - Dev Project](https://github.com/Pranshu2504/Dev-Project)
-- **🎥 Demo Video**: [Loom](https://www.loom.com/share/d4231eaf55fd45dc9e85a5a3d7e68d28?sid=ce570aeb-53b8-4ee1-9c6e-8160f92148e4)
+- **🌐 Live Project**: [Coming Soon - Deploy on Vercel/Railway]
+- **📁 GitHub Repository**: [Code_Review_Assistant](https://github.com/Shrey-003/Code_Review_Assistant)
+- **📚 Documentation**: See below for architecture and setup
 
 ## 📚 Architecture Diagram
 

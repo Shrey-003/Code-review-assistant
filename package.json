@@ -1,7 +1,7 @@
 {
-  "name": "node-express-jwt-auth",
+  "name": "code-review-assistant",
   "version": "1.0.0",
-  "description": "",
+  "description": "Code Review Assistant - Online Judge System with enhanced features",
   "main": "app.js",
   "dependencies": {
     "axios": "^1.10.0",
@@ -19,17 +19,25 @@
     "validator": "^13.1.1"
   },
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamshaunjp/node-express-jwt-auth.git"
+    "url": "git+https://github.com/Shrey-003/Code_Review_Assistant.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "online-judge",
+    "coding-platform",
+    "algorithm",
+    "competitive-programming",
+    "code-review"
+  ],
+  "author": "Shrey-003",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/iamshaunjp/node-express-jwt-auth/issues"
+    "url": "https://github.com/Shrey-003/Code_Review_Assistant/issues"
   },
-  "homepage": "https://github.com/iamshaunjp/node-express-jwt-auth#readme"
+  "homepage": "https://github.com/Shrey-003/Code_Review_Assistant#readme"
 }

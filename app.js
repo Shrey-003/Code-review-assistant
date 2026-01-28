@@ -7,6 +7,8 @@ const { GridFSBucket } = require("mongodb");
 const authRoutes = require("./routes/authRoutes");
 const problemRoutes = require("./routes/problemRoutes");
 const submissionRoutes = require("./routes/submissionRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const templateRoutes = require("./routes/templateRoutes");
 const { initializeGridFS } = require("./controllers/problemController");
 
 // Load .env only in development
@@ -21,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://dev-project-aj2v4vtls-pranshu-goels-projects.vercel.app",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Configure your frontend URL
     credentials: true,
   })
 );
@@ -34,7 +36,7 @@ mongoose
   })
   .then(async () => {
     console.log("✅ MongoDB connected");
-    
+
     const db = mongoose.connection.db;
     const gfs = new GridFSBucket(db, { bucketName: "problem_data" });
 
@@ -59,6 +61,8 @@ mongoose
     app.use("/api/auth", authRoutes);
     app.use("/api/problems", problemRoutes);
     app.use("/api/submissions", submissionRoutes);
+    app.use("/api/dashboard", dashboardRoutes);
+    app.use("/api/templates", templateRoutes);
 
     app.use((req, res, next) => {
       if (!req.path.startsWith("/api")) {
