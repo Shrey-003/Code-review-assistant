@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const problemController = require("../controllers/problemController");
-const { requireAdmin } = require("../middleware/authMiddleware");
+const { requireAdmin, requireAuth } = require("../middleware/authMiddleware");
 
 // Public Routes
 router.get("/", problemController.listProblems);
@@ -12,8 +12,8 @@ router.post("/", requireAdmin, problemController.createProblem);
 router.put("/:id", requireAdmin, problemController.editProblem);
 router.delete("/:id", requireAdmin, problemController.deleteProblem);
 
-// Submission & Run
-router.post("/:id/submit", problemController.submitProblem);  // all test cases
-router.post("/:id/run", problemController.runProblem);        // 3 samples + custom input
+// Submission & Run (requires login)
+router.post("/:id/submit", requireAuth, problemController.submitProblem);
+router.post("/:id/run", requireAuth, problemController.runProblem);
 
 module.exports = router;

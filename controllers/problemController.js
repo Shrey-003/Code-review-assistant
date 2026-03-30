@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Problem = require("../models/problems");
 const axios = require("axios");
 const { Readable } = require("stream");
-require("dotenv").config();
+// dotenv is loaded in app.js
 
 const COMPILER_URL = process.env.COMPILER_URL || "http://localhost:7000";
 
@@ -39,8 +39,7 @@ const initializeGridFS = () => {
   });
 };
 
-// Call this when your app starts
-initializeGridFS().catch(console.error);
+// initializeGridFS() is called from app.js after MongoDB connects
 
 // === 🔧 GridFS Utilities ===
 

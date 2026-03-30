@@ -30,10 +30,7 @@ app.use(
 
 // MongoDB connect
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI)
   .then(async () => {
     console.log("✅ MongoDB connected");
 
@@ -57,6 +54,11 @@ mongoose
       console.error("❌ GridFS initialization failed:", error);
     }
 
+    // Health check endpoint for Render/deployment platforms
+    app.get("/", (req, res) => {
+      res.json({ status: "ok", message: "Code Review Assistant API is running" });
+    });
+
     // Routes
     app.use("/api/auth", authRoutes);
     app.use("/api/problems", problemRoutes);
@@ -71,7 +73,8 @@ mongoose
       next();
     });
 
-    app.listen(5000, () => console.log("✅ Server running on port 5000"));
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
   })
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);

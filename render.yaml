@@ -1,31 +1,17 @@
-{
-  "services": [
-    {
-      "type": "web",
-      "name": "code-review-assistant",
-      "runtime": "node",
-      "plan": "free",
-      "buildCommand": "npm install",
-      "startCommand": "npm start",
-      "healthCheckPath": "/",
-      "envVars": [
-        {
-          "key": "NODE_ENV",
-          "value": "production"
-        },
-        {
-          "key": "MONGO_URI",
-          "sync": false
-        },
-        {
-          "key": "JWT_SECRET",
-          "generateValue": true
-        },
-        {
-          "key": "FRONTEND_URL",
-          "value": "https://code-review-assistant.onrender.com"
-        }
-      ]
-    }
-  ]
-}
+services:
+  - type: web
+    name: code-review-assistant
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://code-review-assistant.onrender.com
