@@ -28,6 +28,26 @@ app.use(
   })
 );
 
+// Health check endpoint (outside MongoDB callback so it works during cold starts)
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Code Review Assistant API is running" });
+});
+
+// Routes (registered before MongoDB connects so Express knows about them)
+app.use("/api/auth", authRoutes);
+app.use("/api/problems", problemRoutes);
+app.use("/api/submissions", submissionRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/templates", templateRoutes);
+
+// 404 handler
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/api")) {
+    return res.status(404).send("Not found");
+  }
+  next();
+});
+
 // MongoDB connect
 mongoose
   .connect(process.env.MONGO_URI)
@@ -53,29 +73,11 @@ mongoose
     } catch (error) {
       console.error("❌ GridFS initialization failed:", error);
     }
-
-    // Health check endpoint for Render/deployment platforms
-    app.get("/", (req, res) => {
-      res.json({ status: "ok", message: "Code Review Assistant API is running" });
-    });
-
-    // Routes
-    app.use("/api/auth", authRoutes);
-    app.use("/api/problems", problemRoutes);
-    app.use("/api/submissions", submissionRoutes);
-    app.use("/api/dashboard", dashboardRoutes);
-    app.use("/api/templates", templateRoutes);
-
-    app.use((req, res, next) => {
-      if (!req.path.startsWith("/api")) {
-        return res.status(404).send("Not found");
-      }
-      next();
-    });
-
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
   })
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);
   });
+
+// Start server immediately (don't wait for MongoDB)
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
