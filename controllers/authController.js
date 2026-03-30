@@ -55,10 +55,10 @@ module.exports.login_get = (req, res) => {
 
 // POST signup
 module.exports.signup_post = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    const user = await User.create({ email, password });
+    const user = await User.create({ username, email, password });
     const token = createToken(user._id, user.role);
 
     res.cookie("jwt", token, getCookieOptions());
@@ -66,6 +66,7 @@ module.exports.signup_post = async (req, res) => {
     res.status(201).json({
       user: {
         _id: user._id,
+        username: user.username,
         email: user.email,
         role: user.role,
       },
@@ -89,6 +90,7 @@ module.exports.login_post = async (req, res) => {
     res.status(200).json({
       user: {
         _id: user._id,
+        username: user.username,
         email: user.email,
         role: user.role,
       },
