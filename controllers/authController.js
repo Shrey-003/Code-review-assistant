@@ -13,7 +13,11 @@ const handleErrors = (err) => {
   }
 
   if (err.code === 11000) {
-    errors.email = "That email is already registered";
+    if (err.message.includes('username')) {
+      errors.username = "That username is already taken";
+    } else {
+      errors.email = "That email is already registered";
+    }
     return errors;
   }
 
