@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'https://code-review-assistant-7z7l.onrender.com';
+const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;

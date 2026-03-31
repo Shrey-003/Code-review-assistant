@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { GridFSBucket } = require("mongodb");
+const path = require("path");
 
 const authRoutes = require("./routes/authRoutes");
 const problemRoutes = require("./routes/problemRoutes");
@@ -30,7 +31,7 @@ app.use(
 );
 
 // Health check endpoint (outside MongoDB callback so it works during cold starts)
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Code Review Assistant API is running" });
 });
 
@@ -42,12 +43,21 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/templates", templateRoutes);
 
-// 404 handler
+// 404 handler for API routes
 app.use((req, res, next) => {
-  if (!req.path.startsWith("/api")) {
-    return res.status(404).send("Not found");
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({ error: "API Route Not found" });
   }
   next();
+});
+
+// --- Frontend Static File Serving ---
+// Serve the built React static files
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+// Catch-all route to serve the React app (handles client-side routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
 // MongoDB connect
