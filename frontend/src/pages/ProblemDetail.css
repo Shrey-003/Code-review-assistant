@@ -1,0 +1,101 @@
+.problem-page { flex: 1; display: flex; flex-direction: column; height: calc(100vh - 64px); }
+.problem-split { display: flex; flex: 1; overflow: hidden; }
+
+/* Left panel */
+.problem-left {
+  width: 45%; min-width: 350px;
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.problem-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 0;
+}
+.problem-header h1 { font-size: 1.3rem; font-weight: 700; }
+
+.panel-tabs {
+  display: flex; gap: 0; padding: 16px 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+.panel-tab {
+  padding: 10px 20px; border: none; background: none;
+  color: var(--text-secondary); font-weight: 500; font-size: 0.85rem;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all var(--transition); font-family: var(--font-body);
+  position: relative;
+}
+.panel-tab:hover { color: var(--text-primary); }
+.panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); display: inline-block; margin-left: 6px;
+}
+
+.problem-desc { padding: 20px 24px; flex: 1; }
+.desc-text { font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); }
+
+.examples { margin-top: 24px; }
+.examples h3, .constraints h3 { font-size: 1rem; margin-bottom: 12px; color: var(--text-primary); }
+.example-card {
+  background: var(--bg-secondary); border-radius: var(--radius-sm);
+  padding: 16px; margin-bottom: 12px;
+}
+.example-block { margin-bottom: 8px; }
+.example-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+.example-card pre {
+  font-family: var(--font-mono); font-size: 0.85rem;
+  color: var(--text-primary); margin-top: 4px; white-space: pre-wrap;
+}
+.constraints { margin-top: 24px; }
+.constraints pre { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); white-space: pre-wrap; }
+
+/* Output panel */
+.output-panel { padding: 20px 24px; flex: 1; }
+.output-empty { text-align: center; padding: 40px; color: var(--text-muted); }
+.output-empty span { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+.verdict {
+  font-size: 1.2rem; font-weight: 700; padding: 12px 20px;
+  border-radius: var(--radius-sm); margin-bottom: 16px;
+}
+.verdict.accepted { background: var(--success-bg); color: var(--success); }
+.verdict.rejected { background: var(--danger-bg); color: var(--danger); }
+
+.test-results { display: flex; flex-direction: column; gap: 6px; }
+.test-case {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 6px; font-size: 0.9rem;
+}
+.test-case.passed { background: var(--success-bg); color: var(--success); }
+.test-case.failed { background: var(--danger-bg); color: var(--danger); }
+.tc-icon { font-weight: 700; }
+.tc-detail { margin-left: auto; font-size: 0.8rem; display: flex; flex-direction: column; gap: 2px; }
+.raw-output {
+  font-family: var(--font-mono); font-size: 0.85rem;
+  background: var(--bg-secondary); padding: 12px; border-radius: 6px;
+  white-space: pre-wrap; color: var(--text-secondary); margin-top: 12px;
+}
+.raw-output.error { color: var(--danger); }
+
+/* Right panel - Editor */
+.problem-right { flex: 1; display: flex; flex-direction: column; }
+.editor-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+.lang-select {
+  padding: 6px 12px; border-radius: 6px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--text-primary); font-family: var(--font-body); font-size: 0.85rem;
+  cursor: pointer; outline: none;
+}
+.editor-actions { display: flex; gap: 8px; }
+.editor-wrapper { flex: 1; }
+
+@media (max-width: 900px) {
+  .problem-split { flex-direction: column; }
+  .problem-left { width: 100%; min-width: unset; max-height: 45vh; border-right: none; border-bottom: 1px solid var(--border); }
+  .problem-right { flex: 1; min-height: 300px; }
+}

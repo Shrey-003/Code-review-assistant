@@ -1,0 +1,44 @@
+.problems-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.filter-tabs { display: flex; gap: 4px; background: var(--bg-secondary); border-radius: var(--radius-sm); padding: 3px; }
+.filter-tab {
+  padding: 8px 18px; border: none; background: none; color: var(--text-secondary);
+  font-weight: 500; font-size: 0.85rem; cursor: pointer; border-radius: 6px;
+  transition: all var(--transition); font-family: var(--font-body);
+}
+.filter-tab:hover { color: var(--text-primary); }
+.filter-tab.active { background: var(--accent); color: white; }
+.problem-count { color: var(--text-muted); font-size: 0.85rem; }
+
+.problems-list { display: flex; flex-direction: column; gap: 4px; }
+
+.problem-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-radius: var(--radius-sm);
+  background: var(--bg-card); border: 1px solid var(--border);
+  text-decoration: none; color: var(--text-primary);
+  transition: all var(--transition); animation: fadeIn 0.3s ease-out both;
+}
+.problem-row:hover {
+  border-color: var(--accent); background: var(--bg-card-hover);
+  transform: translateX(4px);
+}
+.problem-info { display: flex; align-items: center; gap: 16px; }
+.problem-number { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; min-width: 30px; }
+.problem-title { font-weight: 600; font-size: 1rem; }
+.problem-tags { display: flex; gap: 6px; margin-top: 4px; }
+.tag {
+  font-size: 0.7rem; padding: 2px 8px; border-radius: 4px;
+  background: var(--bg-secondary); color: var(--text-muted);
+}
+.problem-meta { display: flex; align-items: center; gap: 12px; }
+
+.empty-state {
+  text-align: center; padding: 80px 20px; color: var(--text-muted);
+}
+.empty-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.empty-state h3 { color: var(--text-secondary); margin-bottom: 6px; }

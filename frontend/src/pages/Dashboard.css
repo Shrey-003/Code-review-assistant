@@ -1,0 +1,12 @@
+.stats-grid { margin-bottom: 40px; }
+.glow-card {
+  border-color: rgba(108, 92, 231, 0.3);
+  background: linear-gradient(135deg, var(--bg-card), rgba(108, 92, 231, 0.05));
+}
+.streak-value { color: var(--warning) !important; }
+.recent-section h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
+.lang-badge {
+  font-family: var(--font-mono); font-size: 0.8rem; padding: 3px 8px;
+  border-radius: 4px; background: var(--bg-secondary); color: var(--text-secondary);
+}
+.date-cell { color: var(--text-muted); font-size: 0.85rem; }
