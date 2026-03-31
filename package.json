@@ -4,6 +4,7 @@
   "description": "Code Review Assistant - Online Judge System with enhanced features",
   "main": "app.js",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "axios": "^1.10.0",
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.7",
