@@ -2,18 +2,25 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 const handleErrors = (err) => {
-  let errors = { email: "", password: "" };
+  console.error("❌ Auth error:", err.message, err.code || "");
+  let errors = {};
 
   if (err.message === "incorrect email") {
     errors.email = "That email is not registered";
+    return errors;
   }
 
   if (err.message === "incorrect password") {
     errors.password = "That password is incorrect";
+    return errors;
   }
 
   if (err.code === 11000) {
-    if (err.message.includes('username')) {
+    if (err.keyPattern && err.keyPattern.username) {
+      errors.username = "That username is already taken";
+    } else if (err.keyPattern && err.keyPattern.email) {
+      errors.email = "That email is already registered";
+    } else if (err.message.includes('username')) {
       errors.username = "That username is already taken";
     } else {
       errors.email = "That email is already registered";
@@ -21,12 +28,15 @@ const handleErrors = (err) => {
     return errors;
   }
 
-  if (err.message.includes("user validation failed")) {
+  if (err.message && err.message.includes("user validation failed")) {
     Object.values(err.errors).forEach(({ properties }) => {
       errors[properties.path] = properties.message;
     });
+    return errors;
   }
 
+  // Catch-all: return the actual error message so it's visible in the UI
+  errors.general = err.message || "An unexpected error occurred";
   return errors;
 };
 
