@@ -316,7 +316,7 @@ MIT License - feel free to use this project for learning or commercial purposes.
 ## 🔗 Links
 
 - **GitHub Repository:** https://github.com/Shrey-003/Code-review-assistant
-- **Live Demo:** [Coming Soon]
+- **Live API Endpoint:** https://code-review-assistant-7z7l.onrender.com
 - **Documentation:** See [`SETUP_GUIDE.md`](./SETUP_GUIDE.md) for detailed setup instructions
 
 ---
