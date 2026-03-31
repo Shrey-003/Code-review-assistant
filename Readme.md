@@ -137,7 +137,8 @@ npm run dev
 npm start
 ```
 
-The server will start on **http://localhost:5000**
+The **Backend API** will start on **http://localhost:5000**
+The **Frontend Website** (the part you actually click!) will start on **http://localhost:3000** (once you run `npm run dev` in the frontend folder).
 
 ---
 
