@@ -75,7 +75,8 @@ mongoose
     }
   })
   .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("❌ MongoDB connection error on startup:", err);
+    process.exit(1); // Force Render to restart the container if connection fails
   });
 
 // Start server immediately (don't wait for MongoDB)
