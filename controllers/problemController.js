@@ -124,7 +124,7 @@ const deleteGridFSFileIfExists = async (filename) => {
 // Create a new problem
 exports.createProblem = async (req, res) => {
   try {
-    const { title, description, difficulty, testCases } = req.body;
+    const { title, description, difficulty, testCases, tags } = req.body;
 
     // Validate required fields
     if (!title || !description || !difficulty || !Array.isArray(testCases)) {
@@ -162,7 +162,12 @@ exports.createProblem = async (req, res) => {
     }
 
     // Create problem in database
-    const newProblem = new Problem({ title, description, difficulty });
+    const newProblem = new Problem({ 
+      title, 
+      description, 
+      difficulty, 
+      tags: Array.isArray(tags) ? tags : [] 
+    });
     await newProblem.save();
 
     const id = newProblem._id.toString();
@@ -250,11 +255,16 @@ exports.getProblem = async (req, res) => {
 exports.editProblem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, difficulty, testCases } = req.body;
+    const { title, description, difficulty, testCases, tags } = req.body;
 
     const updated = await Problem.findByIdAndUpdate(
       id,
-      { title, description, difficulty },
+      { 
+        title, 
+        description, 
+        difficulty, 
+        ...(tags !== undefined && { tags: Array.isArray(tags) ? tags : [] }) 
+      },
       { new: true }
     );
 
@@ -336,12 +346,15 @@ exports.runProblem = async (req, res) => {
 // List problems with filtering, sorting, and pagination
 exports.listProblems = async (req, res) => {
   try {
-    const { difficulty, sort, page = 1, limit = 20 } = req.query;
+    const { difficulty, tags, sort, page = 1, limit = 20 } = req.query;
 
     // Build query
     const query = {};
-    if (difficulty) {
+    if (difficulty && difficulty !== 'all') {
       query.difficulty = difficulty;
+    }
+    if (tags) {
+      query.tags = { $in: tags.split(',').map(t => t.trim()) };
     }
 
     // Build sort
@@ -361,7 +374,7 @@ exports.listProblems = async (req, res) => {
     const limitNum = parseInt(limit);
 
     const total = await Problem.countDocuments(query);
-    const problems = await Problem.find(query, "title difficulty createdAt")
+    const problems = await Problem.find(query, "title difficulty tags createdAt")
       .sort(sortOption)
       .skip((pageNum - 1) * limitNum)
       .limit(limitNum);
